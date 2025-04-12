@@ -6,7 +6,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import java.util.List;
 
 @Node("Employee")
-public class Employee {
+public class EmployeeEntity {
 
     @Id
     private String email;
@@ -16,15 +16,7 @@ public class Employee {
     private Birthdate birthdate;
     private List<String> roles;
 
-    public Employee() { //empty constructor
-    }
-
-    public Employee(String email, String name, String password, Birthdate birthdate, List<String> roles) {
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.birthdate = birthdate;
-        this.roles = roles;
+    public EmployeeEntity() { //empty constructor
     }
 
     public String getEmail() {
@@ -40,6 +32,10 @@ public class Employee {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
