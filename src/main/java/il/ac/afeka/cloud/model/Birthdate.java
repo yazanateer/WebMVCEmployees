@@ -1,6 +1,13 @@
 package il.ac.afeka.cloud.model;
 
+import org.springframework.data.neo4j.core.schema.Id;
+import org.springframework.data.neo4j.core.schema.Node;
+
+@Node("Birthdate")
 public class Birthdate {
+
+    @Id
+    private String id;
 
     private String day;
     private String month;

@@ -1,7 +1,9 @@
 package il.ac.afeka.cloud.model;
 
+import org.springframework.data.neo4j.core.schema.CompositeProperty;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.List;
 
@@ -13,7 +15,10 @@ public class EmployeeEntity {
 
     private String name;
     private String password;
+
+    @Relationship(type = "BIRTHDATE", direction = Relationship.Direction.OUTGOING)
     private Birthdate birthdate;
+
     private List<String> roles;
 
     public EmployeeEntity() { //empty constructor

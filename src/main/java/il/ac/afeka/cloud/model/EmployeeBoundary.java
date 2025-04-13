@@ -46,6 +46,7 @@ public class EmployeeBoundary {
         return entity;
     }
 
+
     public String getEmail() {
         return email;
     }
@@ -75,6 +76,17 @@ public class EmployeeBoundary {
     }
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public String toString() {
+        return "EmployeeBoundary{" +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", birthdate=" + birthdate +
+                ", roles=" + roles +
+                '}';
     }
 
 }

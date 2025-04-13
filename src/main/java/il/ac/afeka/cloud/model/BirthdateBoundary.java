@@ -1,8 +1,20 @@
 package il.ac.afeka.cloud.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 public class BirthdateBoundary {
+
+    @NotBlank(message = "Day is required")
+    @Pattern(regexp = "^(0?[1-9]|[12][0-9]|3[01])$", message = "Invalid day format")
     private String day;
+
+    @NotBlank(message = "Month is required")
+    @Pattern(regexp = "^(0?[1-9]|1[0-2])$", message = "Invalid month format")
     private String month;
+
+    @NotBlank(message = "Month is required")
+    @Pattern(regexp = "^(0?[1-9]|1[0-2])$", message = "Invalid month format")
     private String year;
 
     public BirthdateBoundary() {}
@@ -42,6 +54,15 @@ public class BirthdateBoundary {
     }
     public void setYear(String year) {
         this.year = year;
+    }
+
+    @Override
+    public String toString() {
+        return "BirthdateBoundary{" +
+                "day='" + day + '\'' +
+                ", month='" + month + '\'' +
+                ", year='" + year + '\'' +
+                '}';
     }
 
 
