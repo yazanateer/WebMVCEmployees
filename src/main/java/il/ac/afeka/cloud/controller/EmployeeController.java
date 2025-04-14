@@ -34,10 +34,19 @@ public class EmployeeController {
         }
     }
 
-    @GetMapping("/employees")
-    public List<EmployeeEntity> getAll() {
-        return employeeCRUD.findAll();
+    @GetMapping("/{employeeEmail}")
+    public ResponseEntity<EmployeeBoundary> getEmployeeByEmailAndPassword(
+            @PathVariable String employeeEmail,
+            @RequestParam String password){
+
+        try{
+            EmployeeBoundary employee = employeeService.getByEmailAndPassword(employeeEmail, password);
+            return new ResponseEntity<>(employee, HttpStatus.OK);
+        } catch(RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
+
 
 
 }

@@ -30,4 +30,13 @@ public class EmployeeImplementation implements EmployeeService {
         response.setPassword(null);
         return response;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EmployeeBoundary getByEmailAndPassword(String email, String password) {
+        EmployeeEntity entity = employeeCRUD.findByEmailAndPassword(email, password).orElseThrow(() -> new RuntimeException("Employee not found"));
+        EmployeeBoundary boundary = new EmployeeBoundary(entity);
+        boundary.setPassword(null);
+        return boundary;
+    }
 }
