@@ -5,6 +5,7 @@ import il.ac.afeka.cloud.interfaces.EmployeeService;
 import il.ac.afeka.cloud.model.EmployeeBoundary;
 import il.ac.afeka.cloud.model.EmployeeEntity;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,28 @@ public class EmployeeController {
         } catch(RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
+    }
+
+//    @GetMapping
+//    public List<EmployeeBoundary> getAllEmployees(
+//            @RequestParam(name = "page", defaultValue = "0") int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size){
+//        Pageable pageable = Pageable.ofSize(size).withPage(page);
+//        return employeeService.getAllEmployees(page, size);
+//    }
+
+    @GetMapping
+    public ResponseEntity<List<EmployeeBoundary>> getEmployeesByEmailDomain(
+            @RequestParam(required = false) String criteria,
+            @RequestParam(required = false) String value,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        if ("byEmailDomain".equals(criteria) && value != null) {
+            return ResponseEntity.ok(employeeService.getEmployeesByEmailDomain(value, page, size));
+        }
+        return ResponseEntity.ok(employeeService.getAllEmployees(page, size));
+
     }
 
 

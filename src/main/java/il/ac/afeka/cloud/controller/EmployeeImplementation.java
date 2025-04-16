@@ -4,8 +4,13 @@ import il.ac.afeka.cloud.EmployeeCRUD;
 import il.ac.afeka.cloud.interfaces.EmployeeService;
 import il.ac.afeka.cloud.model.EmployeeBoundary;
 import il.ac.afeka.cloud.model.EmployeeEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeImplementation implements EmployeeService {
@@ -39,4 +44,29 @@ public class EmployeeImplementation implements EmployeeService {
         boundary.setPassword(null);
         return boundary;
     }
+
+    @Override
+    @Transactional
+    public List<EmployeeBoundary> getAllEmployees(int page, int size){
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<EmployeeEntity> pageResult = employeeCRUD.findAll(pageable);
+        return pageResult.stream().map(entity -> {
+            EmployeeBoundary boundary = new EmployeeBoundary(entity);
+            boundary.setPassword(null);
+            return boundary;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<EmployeeBoundary> getEmployeesByEmailDomain(String emailDomain, int page, int size){
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<EmployeeEntity> pageResult = employeeCRUD.findByEmailEndingWith("@" + emailDomain, pageable);
+        return pageResult.stream().map(entity -> {
+            EmployeeBoundary boundary = new EmployeeBoundary(entity);
+            boundary.setPassword(null);
+            return boundary;
+        }).collect(Collectors.toList());
+    }
+
 }
