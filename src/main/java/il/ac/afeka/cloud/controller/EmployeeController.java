@@ -48,28 +48,33 @@ public class EmployeeController {
         }
     }
 
-//    @GetMapping
-//    public List<EmployeeBoundary> getAllEmployees(
-//            @RequestParam(name = "page", defaultValue = "0") int page,
-//            @RequestParam(name = "size", defaultValue = "10") int size){
-//        Pageable pageable = Pageable.ofSize(size).withPage(page);
-//        return employeeService.getAllEmployees(page, size);
-//    }
-
+    //in this function you can search employees including pagination, you can choose to use criteria to serach, and you can search the employees without criteria
     @GetMapping
-    public ResponseEntity<List<EmployeeBoundary>> getEmployeesByEmailDomain(
+    public ResponseEntity<List<EmployeeBoundary>> searchEmployees(
             @RequestParam(required = false) String criteria,
             @RequestParam(required = false) String value,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        if ("byEmailDomain".equals(criteria) && value != null) {
-            return ResponseEntity.ok(employeeService.getEmployeesByEmailDomain(value, page, size));
+        if ((criteria == null) && (value == null)) {
+            return ResponseEntity.ok(employeeService.getAllEmployees(page, size));
         }
-        return ResponseEntity.ok(employeeService.getAllEmployees(page, size));
+
+        assert criteria != null;
+        return switch (criteria) {
+            case "byEmailDomain" -> ResponseEntity.ok(employeeService.getEmployeesByEmailDomain(value, page, size));
+            case "byRole" -> ResponseEntity.ok(employeeService.getEmployeesByRole(value, page, size));
+            case "byAge" -> ResponseEntity.ok(employeeService.getEmployeesByAge(Integer.parseInt(value), page, size));
+            default ->  ResponseEntity.ok(List.of());
+        };
 
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> deleteEmployee() {
+        employeeService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 
 }
