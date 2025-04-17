@@ -118,4 +118,19 @@ public class EmployeeImplementation implements EmployeeService {
 
     }
 
+    @Override
+    @Transactional
+    public void assignManager(String employeeEmail, String managerEmail) {
+        EmployeeEntity employee = employeeCRUD.findById(employeeEmail).orElseThrow(() -> new RuntimeException("Employee not found"));
+        EmployeeEntity manager = employeeCRUD.findById(managerEmail).orElseThrow(() -> new RuntimeException("Employee not found"));
+        System.out.println("🔥 Called assignManager implementaion for: "  + employee.getEmail() + " : " + manager.getEmail() );
+
+
+        if (employee.getManager() != null && employee.getManager().getEmail().equals(managerEmail)) return ;
+        System.out.println("🔥 passed the if statement : " );
+
+        employee.setManager(manager);
+        employeeCRUD.save(employee);
+    }
+
 }

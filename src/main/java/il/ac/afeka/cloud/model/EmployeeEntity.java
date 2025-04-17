@@ -21,6 +21,12 @@ public class EmployeeEntity {
 
     private List<String> roles;
 
+    //for the bonus
+    @Relationship(type = "MANAGED_BY", direction = Relationship.Direction.OUTGOING)
+    private EmployeeEntity manager;
+
+    //
+
     public EmployeeEntity() { //empty constructor
     }
 
@@ -63,5 +69,11 @@ public class EmployeeEntity {
         this.roles = roles;
     }
 
+    public EmployeeEntity getManager() {
+        return manager;
+    }
 
+    public void setManager(EmployeeEntity manager) {
+        this.manager = manager;
+    }
 }

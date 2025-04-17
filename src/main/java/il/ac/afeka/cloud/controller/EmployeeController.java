@@ -4,6 +4,7 @@ import il.ac.afeka.cloud.EmployeeCRUD;
 import il.ac.afeka.cloud.interfaces.EmployeeService;
 import il.ac.afeka.cloud.model.EmployeeBoundary;
 import il.ac.afeka.cloud.model.EmployeeEntity;
+import il.ac.afeka.cloud.model.ManagerEmailBoundary;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -74,6 +75,21 @@ public class EmployeeController {
     public ResponseEntity<Void> deleteEmployee() {
         employeeService.deleteAll();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{employeeEmail}/manager")
+    public ResponseEntity<Void> assignManager(
+            @PathVariable String employeeEmail,
+            @RequestBody ManagerEmailBoundary managerBoundary
+    ){
+        System.out.println("🔥 Called assignManager for: " + employeeEmail + " : " + managerBoundary.getEmail());
+
+        try {
+            employeeService.assignManager(employeeEmail, managerBoundary.getEmail());
+            return ResponseEntity.ok().build();
+        } catch(RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
 
