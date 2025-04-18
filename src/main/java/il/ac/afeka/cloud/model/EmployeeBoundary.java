@@ -14,7 +14,7 @@ public class EmployeeBoundary {
     @NotBlank
     private String name;
 
-    @Size(min = 8, message = "Password must have at least 3 characters")
+    @Size(min = 3, message = "Password must have at least 3 characters")
     private String password;
 
     @NotNull

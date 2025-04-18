@@ -16,7 +16,7 @@ public class EmployeeEntity {
     private String name;
     private String password;
 
-    @Relationship(type = "BIRTHDATE", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "BIRTHDATE", direction = Relationship.Direction.INCOMING)
     private Birthdate birthdate;
 
     private List<String> roles;

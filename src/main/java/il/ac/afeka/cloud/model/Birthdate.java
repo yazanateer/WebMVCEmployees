@@ -20,6 +20,7 @@ public class Birthdate {
         this.day = day;
         this.month = month;
         this.year = year;
+        this.id = day + "-" + month + "-" + year;
     }
 
     public String getDay() {
@@ -44,5 +45,9 @@ public class Birthdate {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+    public void setId(String birthdateId) {
+        this.id = birthdateId;
     }
 }

@@ -49,7 +49,6 @@ public class EmployeeController {
         }
     }
 
-    //in this function you can search employees including pagination, you can choose to use criteria to serach, and you can search the employees without criteria
     @GetMapping
     public ResponseEntity<List<EmployeeBoundary>> searchEmployees(
             @RequestParam(required = false) String criteria,
@@ -93,4 +92,32 @@ public class EmployeeController {
     }
 
 
+    @GetMapping("/{employeeEmail}/manager")
+    public ResponseEntity<EmployeeBoundary> getManagerOfEmployee(@PathVariable String employeeEmail) {
+        try {
+            EmployeeBoundary manager = employeeService.getManagerOfEmployee(employeeEmail);
+            return ResponseEntity.ok(manager);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
+    @GetMapping("/{managerEmail}/subordinates")
+    public ResponseEntity<List<EmployeeBoundary>> getSubordinates(
+            @PathVariable String managerEmail,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(employeeService.getSubordinates(managerEmail, page, size));
+    }
+
+    @DeleteMapping("/{employeeEmail}/manager")
+    public ResponseEntity<Void> removeManager(@PathVariable String employeeEmail) {
+        try{
+            employeeService.removeManager(employeeEmail);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 }

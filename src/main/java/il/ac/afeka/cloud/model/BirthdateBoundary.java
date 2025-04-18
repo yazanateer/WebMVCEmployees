@@ -26,15 +26,17 @@ public class BirthdateBoundary {
     }
 
     public BirthdateBoundary(Birthdate birthdate) {
-       if(birthdate != null) {
-           this.day = birthdate.getDay();
-           this.month = birthdate.getMonth();
-           this.year = birthdate.getYear();
-       }
+        if(birthdate != null) {
+            this.day = birthdate.getDay();
+            this.month = birthdate.getMonth();
+            this.year = birthdate.getYear();
+        }
     }
 
     public Birthdate toEntity() {
-        return new Birthdate(day, month, year);
+        Birthdate birthdate = new Birthdate(day, month, year);
+        birthdate.setId(day + "-" + month + "-" + year);
+        return birthdate;
     }
 
     public String getDay() {

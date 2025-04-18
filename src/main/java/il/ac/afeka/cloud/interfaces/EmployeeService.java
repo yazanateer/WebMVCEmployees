@@ -15,4 +15,8 @@ public interface EmployeeService {
     List<EmployeeBoundary> getEmployeesByAge(int age, int page, int size);
     void deleteAll();
     void assignManager(String employeeEmail, String managerEmail);
+    EmployeeBoundary getManagerOfEmployee(String employeeEmail);
+    List<EmployeeBoundary> getSubordinates(String managerEmail, int page, int size);
+    void removeManager(String employeeEmail);
+
 }
