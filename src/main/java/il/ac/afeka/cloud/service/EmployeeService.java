@@ -1,8 +1,6 @@
-package il.ac.afeka.cloud.interfaces;
+package il.ac.afeka.cloud.service;
 
-import il.ac.afeka.cloud.model.EmployeeBoundary;
-import il.ac.afeka.cloud.model.ManagerEmailBoundary;
-import org.springframework.data.neo4j.repository.query.Query;
+import il.ac.afeka.cloud.model.boundary.EmployeeBoundary;
 
 import java.util.List;
 

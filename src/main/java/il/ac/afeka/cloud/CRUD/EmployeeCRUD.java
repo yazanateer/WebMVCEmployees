@@ -1,6 +1,6 @@
-package il.ac.afeka.cloud;
+package il.ac.afeka.cloud.CRUD;
 
-import il.ac.afeka.cloud.model.EmployeeEntity;
+import il.ac.afeka.cloud.model.entity.EmployeeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;

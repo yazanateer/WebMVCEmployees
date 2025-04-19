@@ -1,12 +1,11 @@
-package il.ac.afeka.cloud.controller;
+package il.ac.afeka.cloud.service;
 
-import il.ac.afeka.cloud.BirthdateCRUD;
-import il.ac.afeka.cloud.EmployeeCRUD;
-import il.ac.afeka.cloud.interfaces.EmployeeService;
-import il.ac.afeka.cloud.model.Birthdate;
-import il.ac.afeka.cloud.model.EmployeeBoundary;
-import il.ac.afeka.cloud.model.EmployeeEntity;
-import org.springframework.cglib.core.Local;
+import il.ac.afeka.cloud.CRUD.BirthdateCRUD;
+import il.ac.afeka.cloud.CRUD.EmployeeCRUD;
+import il.ac.afeka.cloud.exception.EmployeeNotFoundException;
+import il.ac.afeka.cloud.model.entity.BirthdateEntity;
+import il.ac.afeka.cloud.model.boundary.EmployeeBoundary;
+import il.ac.afeka.cloud.model.entity.EmployeeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,6 @@ public class EmployeeImplementation implements EmployeeService {
     @Transactional
     public EmployeeBoundary create(EmployeeBoundary employeeBoundary) {
         String email = employeeBoundary.getEmail();
-        System.out.println("Trying to create employee with email: " + email);
 
         if (employeeCRUD.findById(email).isPresent()) {
             throw new RuntimeException("Employee with email already exists: " + email);
@@ -46,11 +44,11 @@ public class EmployeeImplementation implements EmployeeService {
         String year = employeeBoundary.getBirthdate().getYear();
         String birthdateId = day + "-" + month + "-" + year;
 
-        Optional<Birthdate> existingBirthdate = birthdateCRUD.findById(birthdateId);
+        Optional<BirthdateEntity> existingBirthdate = birthdateCRUD.findById(birthdateId);
         if (existingBirthdate.isPresent()) {
             entity.setBirthdate(existingBirthdate.get());
         } else {
-            Birthdate newBirthdate = new Birthdate(day, month, year);
+            BirthdateEntity newBirthdate = new BirthdateEntity(day, month, year);
             birthdateCRUD.save(newBirthdate);
             entity.setBirthdate(newBirthdate);
         }
@@ -66,7 +64,7 @@ public class EmployeeImplementation implements EmployeeService {
     @Override
     @Transactional(readOnly = true)
     public EmployeeBoundary getByEmailAndPassword(String email, String password) {
-        EmployeeEntity entity = employeeCRUD.findByEmailAndPassword(email, password).orElseThrow(() -> new RuntimeException("Employee not found"));
+        EmployeeEntity entity = employeeCRUD.findByEmailAndPassword(email, password).orElseThrow(() -> new EmployeeNotFoundException("Employee with given credentials not found"));
         EmployeeBoundary boundary = new EmployeeBoundary(entity);
         boundary.setPassword(null);
         return boundary;
@@ -117,7 +115,7 @@ public class EmployeeImplementation implements EmployeeService {
         LocalDate to = today.minusYears(age);
 
         return employeeCRUD.findAll(pageable).stream().filter(e -> {
-                    Birthdate birthdate = e.getBirthdate();
+                    BirthdateEntity birthdate = e.getBirthdate();
                     if(birthdate == null)
                         return false;
                     try{
@@ -146,19 +144,18 @@ public class EmployeeImplementation implements EmployeeService {
 @Transactional
 public void assignManager(String employeeEmail, String managerEmail) {
     EmployeeEntity employee = employeeCRUD.findById(employeeEmail)
-            .orElseThrow(() -> new RuntimeException("Employee not found"));
+            .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
     EmployeeEntity manager = employeeCRUD.findById(managerEmail)
-            .orElseThrow(() -> new RuntimeException("Manager not found"));
+            .orElseThrow(() -> new EmployeeNotFoundException("Manager not found"));
 
-    System.out.println("Called assignManager implementation for: "  + employee.getEmail() + " : " + manager.getEmail());
+    BirthdateEntity existingBirthdate = employee.getBirthdate();
+    employee.setBirthdate(existingBirthdate);
 
-    Birthdate existingBirthdate = employee.getBirthdate();
-    employee.setBirthdate(existingBirthdate); // Just re-assign to preserve reference
+    if (employee.getManager() != null && employee.getManager().getEmail().equals(managerEmail)) return;
 
-    if (employee.getManager() != null &&
-            employee.getManager().getEmail().equals(managerEmail)) return;
-
-    System.out.println("Passed the if statement");
+    else if (employee.getManager() != null && !employee.getManager().getEmail().equals(managerEmail)) {
+        removeManager(employeeEmail);
+    }
 
     employee.setManager(manager);
     employeeCRUD.save(employee);
@@ -168,11 +165,11 @@ public void assignManager(String employeeEmail, String managerEmail) {
     @Transactional(readOnly = true)
     public EmployeeBoundary getManagerOfEmployee(String employeeEmail) {
         EmployeeEntity employee = employeeCRUD.findById(employeeEmail)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
 
         EmployeeEntity manager = employee.getManager();
         if (manager == null) {
-            throw new RuntimeException("Manager not assigned");
+            throw new EmployeeNotFoundException("Manager not assigned");
         }
 
         EmployeeBoundary boundary = new EmployeeBoundary(manager);
@@ -191,7 +188,7 @@ public void assignManager(String employeeEmail, String managerEmail) {
                     System.out.println(entity);
                     EmployeeBoundary boundary = new EmployeeBoundary(entity);
                     System.out.println(boundary);
-                    boundary.setPassword(null); // hide passwords
+                    boundary.setPassword(null);
                     return boundary;
                 })
                 .collect(Collectors.toList());
@@ -201,7 +198,7 @@ public void assignManager(String employeeEmail, String managerEmail) {
     @Transactional
     public void removeManager(String employeeEmail) {
         if (!employeeCRUD.existsById(employeeEmail)) {
-            throw new RuntimeException("Employee not found");
+            throw new EmployeeNotFoundException("Employee not found");
         }
 
         employeeCRUD.removeManagerRelation(employeeEmail);

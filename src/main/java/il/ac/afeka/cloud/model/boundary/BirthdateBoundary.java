@@ -1,20 +1,21 @@
-package il.ac.afeka.cloud.model;
+package il.ac.afeka.cloud.model.boundary;
 
+import il.ac.afeka.cloud.model.entity.BirthdateEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 public class BirthdateBoundary {
 
     @NotBlank(message = "Day is required")
-    @Pattern(regexp = "^(0?[1-9]|[12][0-9]|3[01])$", message = "Invalid day format")
+    @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])$", message = "invalid day format")
     private String day;
 
     @NotBlank(message = "Month is required")
-    @Pattern(regexp = "^(0?[1-9]|1[0-2])$", message = "Invalid month format")
+    @Pattern(regexp = "^(0[1-9]|1[0-2])$", message = "invalid month format")
     private String month;
 
     @NotBlank(message = "Month is required")
-    @Pattern(regexp = "^(0?[1-9]|1[0-2])$", message = "Invalid month format")
+    @Pattern(regexp = "^[0-9]{4}$", message = "invalid year format")
     private String year;
 
     public BirthdateBoundary() {}
@@ -25,7 +26,7 @@ public class BirthdateBoundary {
         this.year = year;
     }
 
-    public BirthdateBoundary(Birthdate birthdate) {
+    public BirthdateBoundary(BirthdateEntity birthdate) {
         if(birthdate != null) {
             this.day = birthdate.getDay();
             this.month = birthdate.getMonth();
@@ -33,8 +34,8 @@ public class BirthdateBoundary {
         }
     }
 
-    public Birthdate toEntity() {
-        Birthdate birthdate = new Birthdate(day, month, year);
+    public BirthdateEntity toEntity() {
+        BirthdateEntity birthdate = new BirthdateEntity(day, month, year);
         birthdate.setId(day + "-" + month + "-" + year);
         return birthdate;
     }

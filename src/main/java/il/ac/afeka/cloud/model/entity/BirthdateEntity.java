@@ -1,10 +1,10 @@
-package il.ac.afeka.cloud.model;
+package il.ac.afeka.cloud.model.entity;
 
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 @Node("Birthdate")
-public class Birthdate {
+public class BirthdateEntity {
 
     @Id
     private String id;
@@ -13,10 +13,10 @@ public class Birthdate {
     private String month;
     private String year;
 
-    public Birthdate() { //empty constructor
+    public BirthdateEntity() {
     }
 
-    public Birthdate(String day, String month, String year) {
+    public BirthdateEntity(String day, String month, String year) {
         this.day = day;
         this.month = month;
         this.year = year;

@@ -1,17 +1,18 @@
 package il.ac.afeka.cloud.controller;
 
-import il.ac.afeka.cloud.EmployeeCRUD;
-import il.ac.afeka.cloud.interfaces.EmployeeService;
-import il.ac.afeka.cloud.model.EmployeeBoundary;
-import il.ac.afeka.cloud.model.EmployeeEntity;
-import il.ac.afeka.cloud.model.ManagerEmailBoundary;
+import il.ac.afeka.cloud.CRUD.EmployeeCRUD;
+import il.ac.afeka.cloud.exception.EmployeeNotFoundException;
+import il.ac.afeka.cloud.service.EmployeeService;
+import il.ac.afeka.cloud.model.boundary.EmployeeBoundary;
+import il.ac.afeka.cloud.model.boundary.ManagerEmailBoundary;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/employees")
@@ -26,7 +27,10 @@ public class EmployeeController {
         this.employeeCRUD = employeeCRUD;
     }
 
-    @PostMapping
+    @PostMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<EmployeeBoundary> createEmployee(@Valid @RequestBody EmployeeBoundary employeeBoundary) {
         try {
             EmployeeBoundary createdEmployee = employeeService.create(employeeBoundary);
@@ -36,16 +40,18 @@ public class EmployeeController {
         }
     }
 
-    @GetMapping("/{employeeEmail}")
-    public ResponseEntity<EmployeeBoundary> getEmployeeByEmailAndPassword(
-            @PathVariable String employeeEmail,
-            @RequestParam String password){
 
-        try{
+    @GetMapping("/{employeeEmail}")
+    public ResponseEntity<?> getEmployeeByEmailAndPassword(
+            @PathVariable String employeeEmail,
+            @RequestParam String password) {
+
+        try {
             EmployeeBoundary employee = employeeService.getByEmailAndPassword(employeeEmail, password);
-            return new ResponseEntity<>(employee, HttpStatus.OK);
-        } catch(RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok(employee);
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
     }
 
@@ -77,28 +83,27 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeEmail}/manager")
-    public ResponseEntity<Void> assignManager(
+    public ResponseEntity<?> assignManager(
             @PathVariable String employeeEmail,
-            @RequestBody ManagerEmailBoundary managerBoundary
-    ){
-        System.out.println("🔥 Called assignManager for: " + employeeEmail + " : " + managerBoundary.getEmail());
+            @RequestBody ManagerEmailBoundary managerBoundary) {
 
         try {
             employeeService.assignManager(employeeEmail, managerBoundary.getEmail());
             return ResponseEntity.ok().build();
-        } catch(RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
     }
 
-
     @GetMapping("/{employeeEmail}/manager")
-    public ResponseEntity<EmployeeBoundary> getManagerOfEmployee(@PathVariable String employeeEmail) {
+    public ResponseEntity<?> getManagerOfEmployee(@PathVariable String employeeEmail) {
         try {
             EmployeeBoundary manager = employeeService.getManagerOfEmployee(employeeEmail);
             return ResponseEntity.ok(manager);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (EmployeeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
     }
 
@@ -112,12 +117,13 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{employeeEmail}/manager")
-    public ResponseEntity<Void> removeManager(@PathVariable String employeeEmail) {
-        try{
+    public ResponseEntity<?> removeManager(@PathVariable String employeeEmail) {
+        try {
             employeeService.removeManager(employeeEmail);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (EmployeeNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ex.getMessage());
         }
     }
 }

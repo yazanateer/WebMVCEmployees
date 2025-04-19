@@ -1,4 +1,4 @@
-package il.ac.afeka.cloud.model;
+package il.ac.afeka.cloud.model.boundary;
 
 public class ManagerEmailBoundary {
     private String email;

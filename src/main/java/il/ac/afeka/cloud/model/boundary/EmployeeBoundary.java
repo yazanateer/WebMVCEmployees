@@ -1,6 +1,7 @@
-package il.ac.afeka.cloud.model;
+package il.ac.afeka.cloud.model.boundary;
 
 
+import il.ac.afeka.cloud.model.entity.EmployeeEntity;
 import jakarta.validation.constraints.*;
 
 import java.util.List;
@@ -8,13 +9,13 @@ import java.util.List;
 public class EmployeeBoundary {
 
     @Email
-    @NotBlank
+    @NotBlank(message = "email is required")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "name is required")
     private String name;
 
-    @Size(min = 3, message = "Password must have at least 3 characters")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d).{3,}$", message = "Password must have at least 3 characters, include one uppercase letter and one digit")
     private String password;
 
     @NotNull
@@ -24,7 +25,7 @@ public class EmployeeBoundary {
     private List<@NotBlank String> roles;
 
 
-    public EmployeeBoundary() { //empty constructor
+    public EmployeeBoundary() {
 
     }
 
