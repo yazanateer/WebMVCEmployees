@@ -1,6 +1,6 @@
 # WebMVCEmployees 🚀
 
-A modern Spring Boot + Neo4j **RESTful Microservice** that manages employee data, supports advanced querying, and models organizational hierarchy (bonus).  
+A modern Java Spring Boot + Neo4j **RESTful Microservice** that manages employee data, supports advanced querying, and models organizational hierarchy.  
 Built as part of a Cloud Computing course assignment.
 
 ---
